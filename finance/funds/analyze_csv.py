@@ -130,7 +130,7 @@ for each in mix_4c:
 #    print(x)
 #    print(df_no_NA.at[x, "fund_id"])
 print("output the complete info of mix_5c------------------------------------------")
-print(list(mix_5c))
+#print(list(mix_5c))
 #print(df_no_NA['fund_id'].isin(list(mix_5c)))
-print(df_no_NA.at(list(mix_5c)[0], 'fund_id'))
+#print(df_no_NA.at(list(mix_5c)[0], 'fund_id'))
 

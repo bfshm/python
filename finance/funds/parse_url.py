@@ -1,6 +1,6 @@
 #coding=utf-8
 #!/usr/bin/env python
-
+# url:http://fund.eastmoney.com/allfund.html#0
 # A small script to analyze all the funds data
 # Author :xin xin  from "微信公众号：菜鸟学python"
 from bs4 import BeautifulSoup
