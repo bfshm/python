@@ -58,16 +58,16 @@ class Url_Download():
             for each in ul.find_all('li'):
                 # print each
                 li_list = each.find_all('a')
-                fund_info_dict={'fund_id':'',
-                                'fund_name':'',
+                fund_info_dict={'id':'',
+                                'name':'',
                                 'fund_url':''}
                 if len(li_list)>1:
                     fund=li_list[0].text
-                    fund_id=re.findall(r'\d+',fund)[0]
+                    id=re.findall(r'\d+',fund)[0]
                     fund_url=li_list[0].attrs['href']
-                    fund_name=fund[fund.find('）') + 1:]#fund.decode('utf-8')[fund.find(ur'）') + 1:].encode('utf8')
-                    fund_info_dict['fund_id']=fund_id
-                    fund_info_dict['fund_name']=fund_name
+                    name=fund[fund.find('）') + 1:]#fund.decode('utf-8')[fund.find(ur'）') + 1:].encode('utf8')
+                    fund_info_dict['id']=id
+                    fund_info_dict['name']=name
                     fund_info_dict['fund_url']=fund_url
                     funds_text.append(fund_info_dict)
 
@@ -97,9 +97,9 @@ class Handle_Url(Thread):
     def write_csv_head():
         Handle_Url.del_csv_file()
         with open(CSV_File, 'a', encoding='utf8', newline='') as wf:
-            head = ['fund_id', 'fund_name', 'one_month',
+            head = ['id', 'name', 'one_month',
                     'three_month', 'six_month', 'one_year',
-                    'three_year', 'from_start']
+                    'three_year', 'start_from']
 
             writer = csv.writer(wf)
             writer.writerow(head)
@@ -110,10 +110,10 @@ class Handle_Url(Thread):
         from pymongo import MongoClient
         conn = MongoClient('mongodb://127.0.0.1:27017', 28017)#MongoClient()
         db = conn.fund  #连接fund数据库，没有则自动创建
-        datetime = time.strftime('%Y-%m-%d %H:%M',time.localtime(time.time()))
-        print(datetime)
+        date = time.strftime('%Y-%m-%d',time.localtime(time.time()))
+        print(date)
         #fund_set = db.fund_set    #使用fund_set集合，没有则自动创建
-        fund_set = db[datetime] #使用'YYYY-MM-DD HH:MM'集合，没有则自动创建
+        fund_set = db[date] #使用'YYYY-MM-DD'集合，没有则自动创建
 
         while True:
             if self.queue.empty():
@@ -121,12 +121,12 @@ class Handle_Url(Thread):
             else:
                 fund=self.queue.get()
                 url=fund['fund_url']
-                fund_id=fund['fund_id']
-                fund_name=fund['fund_name']
-                print(self.name+":"+"Begin parse :[%s %s] now"%(fund_id,fund_name))
+                id=fund['id']
+                name=fund['name']
+                print(self.name+":"+"Begin parse :[%s %s] now"%(id,name))
                 fund_data=self.parse_url(url)
-                fund_data.insert(0,fund_id)
-                fund_data.insert(1,fund_name)
+                fund_data.insert(0,id)
+                fund_data.insert(1,name)
 
                 lock.acquire()
                 try:

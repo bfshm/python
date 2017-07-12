@@ -1,13 +1,16 @@
-#coding=utf-8
-#!/usr/bin/env python
-
-# A small script to analyze all the funds data
-# Author :xin xin  from "微信公众号：菜鸟学python"
+import pymongo, time
 import pandas as pd
-import numpy as np
+conn = pymongo.MongoClient('mongodb://127.0.0.1:27017', 28017)#MongoClient()
+db = conn.fund  #连接fund数据库，没有则自动创建
+date = time.strftime('%Y-%m-%d',time.localtime(time.time()))
+print(date)
+#chosen_fund_set = db.chosen_fund_set    #使用fund_set集合，没有则自动创建
+fund_set = db[date] #使用'YYYY-MM-DD'集合，没有则自动创建
+#print(list(fund_set.find()))
+#load data to pandas
+df = pd.DataFrame(list(fund_set.find()))
+df=df.drop(['_id'],axis=1)
 
-file='fund3.1.csv'
-df=pd.read_csv(file)
 print("head-------------------------------------------------------------------------")
 print(len(df))
 print(df.head())
