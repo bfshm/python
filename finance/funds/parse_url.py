@@ -106,6 +106,15 @@ class Handle_Url(Thread):
 
     def run(self):
         print('run in Parse_url')
+
+        from pymongo import MongoClient
+        conn = MongoClient('mongodb://127.0.0.1:27017', 28017)#MongoClient()
+        db = conn.fund  #连接fund数据库，没有则自动创建
+        datetime = time.strftime('%Y-%m-%d %H:%M',time.localtime(time.time()))
+        print(datetime)
+        #fund_set = db.fund_set    #使用fund_set集合，没有则自动创建
+        fund_set = db[datetime] #使用'YYYY-MM-DD HH:MM'集合，没有则自动创建
+
         while True:
             if self.queue.empty():
                 break
@@ -122,6 +131,7 @@ class Handle_Url(Thread):
                 lock.acquire()
                 try:
                     self.write_each_row_in_csv(fund_data)
+                    self.write_each_row_in_mongo(fund_data, fund_set)
                 finally:
                     lock.release()
 
@@ -129,6 +139,18 @@ class Handle_Url(Thread):
         with open(CSV_File, 'a', encoding='utf8', newline='') as wf:
             writer=csv.writer(wf)
             writer.writerow(text)
+
+    def write_each_row_in_mongo(self, fund_data, fund_set):
+        if len(fund_data)>=8:
+            row = {"id":fund_data[0], 
+                "name":fund_data[1], 
+                "one_month":fund_data[2], 
+                "three_month":fund_data[3], 
+                "six_month":fund_data[4], 
+                "one_year":fund_data[5],
+                "three_year":fund_data[6],
+                "start_from":fund_data[7]}
+            fund_set.insert_one(row)        
 
     def html_download(self,url):
         if url is None:
@@ -172,7 +194,7 @@ class Handle_Url(Thread):
         html_content=self.html_download(url)
         fund_data=self.html_decode(html_content)
         '''sort the data as:
-        one_month,three_month,six_month,one_year,three_yar,start_from
+        one_month,three_month,six_month,one_year,three_year,start_from
         '''
         if len(fund_data)>=6:
             re_sorted_fund_data=[fund_data[0],fund_data[2],
