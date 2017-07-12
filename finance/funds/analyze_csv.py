@@ -134,3 +134,21 @@ print("output the complete info of mix_5c---------------------------------------
 #print(df_no_NA['fund_id'].isin(list(mix_5c)))
 #print(df_no_NA.at(list(mix_5c)[0], 'fund_id'))
 
+print("save mix to mongodb------------------------------------------")
+import time
+from pymongo import MongoClient
+conn = MongoClient('mongodb://127.0.0.1:27017', 28017)#MongoClient()
+db = conn.fund  #连接fund数据库，没有则自动创建
+datetime = time.strftime('%Y-%m-%d %H:%M',time.localtime(time.time()))
+print(datetime)
+chosen_fund_set = db.chosen_fund_set    #使用fund_set集合，没有则自动创建
+#fund_set = db[datetime] #使用'YYYY-MM-DD HH:MM'集合，没有则自动创建
+
+row = {"datetime":datetime, 
+        "mix6":str(mix_6c),
+        "mix5":str(mix_5c),
+        "mix4":str(mix_4c),
+        "mix3":str(mix_3c),
+        "mix2":str(mix_2c),
+        "mix1":str(mix_1c)}
+chosen_fund_set.insert_one(row) 
