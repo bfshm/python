@@ -12,8 +12,8 @@ print("head---------------------------------------------------------------------
 print(len(df))
 print(df.head())
 
-print("id to index-------------------------------------------------------------")
-df=df.set_index(df['id'])
+print("fund_id to index-------------------------------------------------------------")
+df=df.set_index(df['fund_id'])
 print(df.head())
 
 #remove NA row
@@ -21,7 +21,7 @@ print("remove NA row------------------------------------------------------------
 df_no_NA=df.dropna()
 print('dropna column',len(df_no_NA))
 
-df_no_name=df_no_NA.drop(['name','id'],axis=1)
+df_no_name=df_no_NA.drop(['fund_name','fund_id'],axis=1)
 print(df_no_name.head())
 
 #del the '%',then we can sort
@@ -43,9 +43,9 @@ def get_large_in_column(column):
 print(df_drop_percent.apply(get_large_in_column))
 
 range=100
-print("sort the top 100 funds by 'start_from'---------------------------------------")
-print(df_drop_percent.sort_values(by=['start_from'],ascending=False).head(range))
-fs_index=df_drop_percent.sort_values(by=['start_from'], ascending=False).head(range).index
+print("sort the top 100 funds by 'from_start'---------------------------------------")
+print(df_drop_percent.sort_values(by=['from_start'],ascending=False).head(range))
+fs_index=df_drop_percent.sort_values(by=['from_start'], ascending=False).head(range).index
 #print(fs_index)
 
 #sort the funds by 'three_year'
@@ -110,14 +110,14 @@ print('mix 1c:',mix_1c)
 
 #check the detailed info aboout the mix_4c
 print("check the detailed info aboout the mix_4c------------------------------------")
-df_drop_percent=df_drop_percent.drop(['start_from','three_year'],axis=1)
+df_drop_percent=df_drop_percent.drop(['from_start','three_year'],axis=1)
 for each in mix_4c:
-    id=df_drop_percent[df_drop_percent.index==each].sum(axis=1).index[0]
+    fund_id=df_drop_percent[df_drop_percent.index==each].sum(axis=1).index[0]
     fund_total_rate=df_drop_percent[df_drop_percent.index==each].sum(axis=1).values[0]
-    print(id,fund_total_rate)
+    print(fund_id,fund_total_rate)
 
-# 5 c with name
-#df_no_NA = df_no_NA.sort_values(by=['id'], ascending=True).head()
+# 5 c with fund_name
+#df_no_NA = df_no_NA.sort_values(by=['fund_id'], ascending=True).head()
 #a = pd.DataFrame(df_no_NA, index=mix_5c)  
 #print(a)
 #print(Index)
@@ -125,14 +125,14 @@ for each in mix_4c:
 #print(a) 
 #print(df_no_NA.head())
 #print()
-#print(df_no_NA.head(['id'], mix_5c))
+#print(df_no_NA.head(['fund_id'], mix_5c))
 #for x in mix_5c:
 #    print(x)
-#    print(df_no_NA.at[x, "id"])
+#    print(df_no_NA.at[x, "fund_id"])
 print("output the complete info of mix_5c------------------------------------------")
 #print(list(mix_5c))
-#print(df_no_NA['id'].isin(list(mix_5c)))
-#print(df_no_NA.at(list(mix_5c)[0], 'id'))
+#print(df_no_NA['fund_id'].isin(list(mix_5c)))
+#print(df_no_NA.at(list(mix_5c)[0], 'fund_id'))
 
 print("save mix to mongodb------------------------------------------")
 import time

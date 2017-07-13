@@ -48,7 +48,7 @@ class Url_Download():
         soup=BeautifulSoup(html_cont,'html.parser',from_encoding='gb18030')
 
         '''
-        get all the fund id 
+        get all the fund_id 
         '''
         title_node=soup.title
         print(title_node.getText())
@@ -58,16 +58,16 @@ class Url_Download():
             for each in ul.find_all('li'):
                 # print each
                 li_list = each.find_all('a')
-                fund_info_dict={'id':'',
-                                'name':'',
+                fund_info_dict={'fund_id':'',
+                                'fund_name':'',
                                 'fund_url':''}
                 if len(li_list)>1:
                     fund=li_list[0].text
-                    id=re.findall(r'\d+',fund)[0]
+                    fund_id=re.findall(r'\d+',fund)[0]
                     fund_url=li_list[0].attrs['href']
-                    name=fund[fund.find('）') + 1:]#fund.decode('utf-8')[fund.find(ur'）') + 1:].encode('utf8')
-                    fund_info_dict['id']=id
-                    fund_info_dict['name']=name
+                    fund_name=fund[fund.find('）') + 1:]#fund.decode('utf-8')[fund.find(ur'）') + 1:].encode('utf8')
+                    fund_info_dict['fund_id']=fund_id
+                    fund_info_dict['fund_name']=fund_name
                     fund_info_dict['fund_url']=fund_url
                     funds_text.append(fund_info_dict)
 
@@ -97,9 +97,9 @@ class Handle_Url(Thread):
     def write_csv_head():
         Handle_Url.del_csv_file()
         with open(CSV_File, 'a', encoding='utf8', newline='') as wf:
-            head = ['id', 'name', 'one_month',
+            head = ['fund_id', 'fund_name', 'one_month',
                     'three_month', 'six_month', 'one_year',
-                    'three_year', 'start_from']
+                    'three_year', 'from_start']
 
             writer = csv.writer(wf)
             writer.writerow(head)
@@ -121,12 +121,12 @@ class Handle_Url(Thread):
             else:
                 fund=self.queue.get()
                 url=fund['fund_url']
-                id=fund['id']
-                name=fund['name']
-                print(self.name+":"+"Begin parse :[%s %s] now"%(id,name))
+                fund_id=fund['fund_id']
+                fund_name=fund['fund_name']
+                print(self.name+":"+"Begin parse :[%s %s] now"%(fund_id,fund_name))
                 fund_data=self.parse_url(url)
-                fund_data.insert(0,id)
-                fund_data.insert(1,name)
+                fund_data.insert(0,fund_id)
+                fund_data.insert(1,fund_name)
 
                 lock.acquire()
                 try:
@@ -142,14 +142,14 @@ class Handle_Url(Thread):
 
     def write_each_row_in_mongo(self, fund_data, fund_set):
         if len(fund_data)>=8:
-            row = {"id":fund_data[0], 
-                "name":fund_data[1], 
+            row = {"fund_id":fund_data[0], 
+                "fund_name":fund_data[1], 
                 "one_month":fund_data[2], 
                 "three_month":fund_data[3], 
                 "six_month":fund_data[4], 
                 "one_year":fund_data[5],
                 "three_year":fund_data[6],
-                "start_from":fund_data[7]}
+                "from_start":fund_data[7]}
             fund_set.insert_one(row)        
 
     def html_download(self,url):
@@ -194,7 +194,7 @@ class Handle_Url(Thread):
         html_content=self.html_download(url)
         fund_data=self.html_decode(html_content)
         '''sort the data as:
-        one_month,three_month,six_month,one_year,three_year,start_from
+        one_month,three_month,six_month,one_year,three_year,from_start
         '''
         if len(fund_data)>=6:
             re_sorted_fund_data=[fund_data[0],fund_data[2],
