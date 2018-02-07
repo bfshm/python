@@ -1,9 +1,11 @@
 #%%
+# -*- coding: utf-8 -*-
 import pandas as pd
 import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
 from matplotlib.widgets import Button
+from matplotlib.widgets import TextBox
 import time
 
 
@@ -35,18 +37,24 @@ class toolbar(object):
     def next(self, event):
         print('next:' + str(self.cur))
         self.cur += 1
-        datas = df.iloc[self.cur].values # datas   
-        subplot.clear()
-        draw_pie(subplot, df.index[self.cur], labels, datas)
-        fig.canvas.draw()
+        self.draw()
 
     def prev(self, event):
         print('preview:' + str(self.cur))
         self.cur -= 1
+        self.draw()
+
+    def draw(self):
         datas = df.iloc[self.cur].values # datas
         subplot.clear()
         draw_pie(subplot, df.index[self.cur], labels, datas)
         fig.canvas.draw()
+
+    def search(self, val):
+        for i in range(0, len(df.index)):
+            if val in df.index[i]:  # similar to substr
+                self.cur = i
+                self.draw()
 
 
 # load excel
@@ -70,5 +78,27 @@ bnext = Button(axnext, 'Next')
 bprev = Button(axprev, 'Previous')    
 bnext.on_clicked(bar.next)
 bprev.on_clicked(bar.prev)
+
+
+def isInt(value):
+  try:
+    int(value)
+    return True
+  except:
+    return False
+
+# init textbox
+def submit(text):
+    #txtval = eval(text)
+    if isInt(text):
+        bar.cur = int(text)
+        bar.draw()
+    else:
+        print(text)   
+        bar.search(text) 
+
+axbox = plt.axes([0.25, 0.05, 0.2, 0.075])
+text_box = TextBox(axbox, label='search by number or city name', initial='永川市')
+text_box.on_submit(submit)
 
 plt.show()
