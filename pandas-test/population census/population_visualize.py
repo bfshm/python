@@ -3,7 +3,6 @@ import pandas as pd
 import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
-from matplotlib import interactive
 import time
 
 def draw_pie(title, labels, datas):
@@ -29,11 +28,11 @@ def draw_pie(title, labels, datas):
     
 
 def main():
-    df = pd.read_excel("data.xls", sheetname='Sheet3', skiprows=4, index_col=0, usecols=3)
+    df = pd.read_excel("data.xls", sheetname='Sheet3', skiprows=4, index_col=0, usecols=[0,1,2,3])
     # remove Unnamed
     df = df.dropna()
 
-    #print(df.head())
+    print(df.head())
     #print(df.iloc[0].values)
     # log for test
     # print("head-------------------------------------------------------------------------")
