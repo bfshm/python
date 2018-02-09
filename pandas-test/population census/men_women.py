@@ -4,11 +4,19 @@
 # -*- coding: utf-8 -*-
 import pandas as pd
 import numpy as np
-import matplotlib
+import matplotlib as mpl
+from matplotlib.font_manager import FontProperties as FP
 from matplotlib import pyplot as plt
 from matplotlib.widgets import Button
 #from matplotlib.widgets import TextBox
 import time
+
+# 全局中文设置
+#mpl.rcParams['font.family'] = 'Microsoft YaHei'
+#mpl.rcParams['font.sans-serif'] = 'Microsoft YaHei'
+# 局部中文：设置分别为中文和英文设置两个FontProperties，以便局部切换中英文字体
+#cfp = FP('Microsoft YaHei', size=12)
+#efp = FP('Microsoft YaHei', size=12)
 
 # load excel
 df = pd.read_excel("data.xls", sheetname='Sheet2', skiprows=4, index_col=0, usecols=[0,11,12,13,14])
@@ -26,13 +34,13 @@ std_men = men#(2, 3, 4, 1, 2)
 women = df.values[:,1][0:cnt] + df.values[:,3][0:cnt]
 std_women = women#(3, 5, 2, 3, 3)
 people = men + women
-print(people)
+#print(people)
 
 cityer = []
 mener = []
 womener = []
 for i in range(0, cnt):
-    if people[i] > 1000000:
+    if people[i] > 1500000:
         mener.append(men[i])
         womener.append(women[i])
         cityer.append(city[i])
@@ -67,10 +75,12 @@ rects2 = subplot.bar(index + bar_width, womener, bar_width,
                  error_kw=error_config,
                  label='Women')
 
-plt.xlabel('城市')
-plt.ylabel('人数')
-subplot.title.set_text('各城市20-29岁男女数量对比')
-plt.xticks(index + bar_width / 2, cityer)
+plt.xlabel('城市', fontsize=50)
+plt.ylabel('人数', fontsize=50)
+#subplot.title.set_text('各城市20-29岁男女数量对比')
+fig.suptitle('中国各省市20-29岁男女数量对比', fontsize=60)
+plt.xticks(index + bar_width / 2, cityer, fontsize=12)
 subplot.legend()
 
+plt.tight_layout()
 plt.show()
