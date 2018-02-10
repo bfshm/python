@@ -64,14 +64,14 @@ error_config = {'ecolor': '0.3'}
 rects1 = subplot.bar(index, mener, bar_width,
                  alpha=opacity,
                  color='b',
-                 yerr=std_men,
+                 yerr=None,
                  error_kw=error_config,
                  label='Men')
 
 rects2 = subplot.bar(index + bar_width, womener, bar_width,
                  alpha=opacity,
                  color='r',
-                 yerr=std_women,
+                 yerr=None,
                  error_kw=error_config,
                  label='Women')
 
