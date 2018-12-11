@@ -1,3 +1,4 @@
+#%%
 from pylab import figure, show 
 #from matplotlib.finance import quotes_historical_yahoo
 from matplotlib.finance import _quotes_historical_yahoo
